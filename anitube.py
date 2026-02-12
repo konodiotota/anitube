@@ -9,15 +9,24 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-load_dotenv()
+#Neste programa é necessário criar um arquivo .env, na mesma pasta que o programa, com as seguintes variáveis:
+#TWILIO_SID=your_twilio_sid
+#TWILIO_TOKEN=your_twilio_auth_token
+#TWILIO_NUMBER=your_twilio_phone_number (com o código do país, ex: +5511999999999)
+#MEU_WHATSAPP=your_whatsapp_number (com o código do país, ex: +5511999999999)  
+#Não podendo esquecer de criar uma conta no Twilio e configurar o WhatsApp Sandbox para obter os números necessários.
 
 account_sid = os.getenv("TWILIO_SID")
 auth_token = os.getenv("TWILIO_TOKEN")
 twilio_number = os.getenv("TWILIO_NUMBER")
 meu_whatsapp = os.getenv("MEU_WHATSAPP")
 
+#nesta parte do codigo puxara tua conta do Twilio usando as variáveis de ambiente para autenticação e envio de mensagens.
+
 client = Client(account_sid, auth_token)
 
+#Aqui o código faz uma requisição para o site do AniTube, utilizando a biblioteca requests para obter o conteúdo da página.
+#Em seguida, a biblioteca BeautifulSoup é usada para analisar o HTML e extrair as informações dos episódios lançados.
 
 url = 'https://www.anitube.news/'
 response = requests.get(url)
@@ -37,15 +46,14 @@ for ep in ep_tags:
         ep_list.append(f"{title}\nLink: {link}\n")
 
 # Montando mensagem
-body_text = "Hoje foram lançados os 10 primeiros episódios no AniTube:\n\n"
+body_text = "Hoje foram lançados os 12 primeiros episódios no AniTube:\n\n"
 
-for item in ep_list[:10]:
+for item in ep_list[:12]:
     body_text += item + "\n"
 
 body_text += "Então quando chegar em casa aproveite ❤️"
 
-# print(body_text)
-
+print(body_text)
 
 def enviar_mensagem():
     client.messages.create(
@@ -54,9 +62,5 @@ def enviar_mensagem():
         to=meu_whatsapp
     )
 
-enviar_mensagem()
-schedule.every().day.at("21:35").do(enviar_mensagem)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if __name__ == "__main__":
+    enviar_mensagem()
